@@ -1,0 +1,270 @@
+:root {
+    --bg-color: #FAFAFA;
+    --text-color: #111827;
+    --primary-blue: #1E3A8A;
+    --secondary-blue: #3B82F6;
+    --accent-red: #DC2626;
+    --success-green: #10B981;
+    --border-color: #E5E7EB;
+    --card-bg: #FFFFFF;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 1.15rem;
+}
+
+header {
+    background-color: var(--primary-blue);
+    color: white;
+    text-align: center;
+    padding: 3rem 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Niveles */
+.level {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    border: 2px solid var(--border-color);
+    border-top: 6px solid var(--primary-blue);
+    transition: all 0.3s ease;
+}
+
+.level.locked {
+    opacity: 0.5;
+    pointer-events: none;
+    border-top-color: #9CA3AF;
+    filter: grayscale(100%);
+}
+
+.level.active {
+    border-color: var(--secondary-blue);
+    border-top: 6px solid var(--secondary-blue);
+    transform: scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.level.completed {
+    border-top-color: var(--success-green);
+}
+
+.level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.level h2 {
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+}
+
+/* Badges */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-badge.locked { background-color: #F3F4F6; color: #6B7280; }
+.status-badge.pending { background-color: #FEF3C7; color: #D97706; }
+.status-badge.in-progress { background-color: #DBEAFE; color: var(--secondary-blue); }
+.status-badge.completed { background-color: #D1FAE5; color: var(--success-green); }
+
+/* Content Placeholders */
+.user-content-placeholder {
+    background-color: #F9FAFB;
+    border: 1px dashed #D1D5DB;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    color: #6B7280;
+    font-style: italic;
+}
+
+/* Challenges */
+.challenge {
+    background-color: #F8FAFC;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    border-left: 4px solid var(--accent-red);
+}
+
+.challenge h3 {
+    color: var(--accent-red);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.question {
+    margin-bottom: 1rem;
+}
+
+.question label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1.15rem;
+    background-color: white;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+select:focus {
+    border-color: var(--secondary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+select:disabled {
+    background-color: #F3F4F6;
+    color: #9CA3AF;
+}
+
+button {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    transition: all 0.2s;
+    font-size: 1.15rem;
+}
+
+.btn-check {
+    background-color: var(--primary-blue);
+    color: white;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-check:hover {
+    background-color: #172554;
+}
+
+.btn-unlock {
+    background-color: var(--accent-red);
+    color: white;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-unlock:hover {
+    background-color: #B91C1C;
+}
+
+.btn-unlock.final {
+    background-color: var(--success-green);
+}
+
+.btn-unlock.final:hover {
+    background-color: #059669;
+}
+
+.message {
+    margin-top: 1rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.message.error { color: var(--accent-red); }
+.message.success { color: var(--success-green); }
+
+.commitment {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    animation: fadeIn 0.5s ease;
+}
+
+.commitment label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.commitment input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--primary-blue);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.victory {
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    margin-top: 2rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+.victory h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.victory.visible {
+    display: block;
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}

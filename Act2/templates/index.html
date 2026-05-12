@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura de Texto: Programación Móvil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Aventura: Programación Móvil</h1>
+        <p>Completa los retos de cada nivel para avanzar.</p>
+    </header>
+    
+    <main class="container">
+        <!-- Nivel 1: La Cámara de las Reglas -->
+        <section id="level-1" class="level active">
+            <div class="level-header">
+                <h2>Nivel 1: La Cámara de las Reglas</h2>
+                <span class="status-badge pending">Pendiente</span>
+            </div>
+            <div class="content">
+                <p>Aquí se explican las normas de convivencia y asistencia.</p>
+                <div class="user-content-filled">
+                    <ol style="text-align: left; padding-left: 20px;">
+                        <li>Se requiere 80% de asistencia para tener derecho a evaluación parcial y 80% de trabajos en clase.</li>
+                        <li>Se permiten 10 minutos de tolerancia y si el alumno llega después de este tiempo puede permanecer en la clase, pero no se tomará la asistencia (Solamente en los horarios de inicio: 7:00 a.m y 14:00 p.m).</li>
+                        <li>Las faltas deberán estar justificadas mediante el correo institucional con un plazo máximo de 24 horas posteriores a la hora de falta en clase mediante correo del tutor (a).</li>
+                        <li>Las tareas y trabajos deberán subirlas al Classroom de forma individual y no se recibirán de manera extemporánea.</li>
+                        <li>Las tareas y trabajos presentarlos en tiempo y forma. La demora de un trabajo o tarea sin justificante y/o con justificante fuera del límite no se aceptan.</li>
+                        <li>Utilizar el correo institucional para trabajar bajo la plataforma Google Classroom.</li>
+                        <li>El plagio o copia de trabajos y/o exámenes, será condicionado a reprobar a la asignatura y se reportará al área correspondiente.</li>
+                        <li>Cualquier deshonestidad académica será sancionada reprobando el parcial sin derecho a examen final.</li>
+                        <li>En circunstancia de indisciplina o falta de respeto... se realizará una primera llamada de atención... tres incidencias de este tipo el alumno no tendrá derecho a examen.</li>
+                        <li>Uso de Laptops y/o dispositivos móviles quedará limitados a uso exclusivo de las actividades que así lo requieran.</li>
+                        <li>Prohibido el uso de audífonos durante la clase.</li>
+                        <li>Prohibido comer y/o tomar líquidos en el salón.</li>
+                        <li>Prohibido sentarse encima de las mesas, así como columpiarse en las sillas.</li>
+                        <li>Todo tema académico debe ser revisado primeramente por parte del alumno con el docente...</li>
+                        <li>Cualquier situación no prevista en el presente reglamento pasar directamente con la dirección del programa educativo.</li>
+                        <li>El día destinado a entrega de calificaciones todos los estudiantes deben estar presentes.</li>
+                        <li>Este reglamento entra en vigor después de que se firme o se acepte por la mayoría de los estudiantes...</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="challenge">
+                <h3>Desafío de la Cámara</h3>
+                
+                <div class="question">
+                    <label>1. ¿Cuál es el porcentaje mínimo de asistencia para tener derecho a evaluación parcial?</label>
+                    <select id="q1-1">
+                        <option value="">Selecciona...</option>
+                        <option value="60">60%</option>
+                        <option value="80">80%</option>
+                        <option value="100">100%</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label>2. ¿Cuál es el tiempo de tolerancia para llegar tarde en horarios de inicio (7:00am/14:00pm)?</label>
+                    <select id="q1-2">
+                        <option value="">Selecciona...</option>
+                        <option value="5">5 minutos</option>
+                        <option value="10">10 minutos</option>
+                        <option value="15">15 minutos</option>
+                    </select>
+                </div>
+                
+                <button onclick="checkAnswers(1, '80', '10')" class="btn-check">Verificar Respuestas</button>
+                <p id="msg-1" class="message"></p>
+                
+                <div id="commitment-1" class="commitment hidden">
+                    <label>
+                        <input type="checkbox" id="chk-1">
+                        <strong>Check de Compromiso:</strong> He leído y acepto las reglas de la clase.
+                    </label>
+                    <button onclick="unlockNext(1)" class="btn-unlock">Desbloquear Siguiente Nivel</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nivel 2: El Oráculo de las Notas -->
+        <section id="level-2" class="level locked">
+            <div class="level-header">
+                <h2>Nivel 2: El Oráculo de las Notas</h2>
+                <span class="status-badge locked">Bloqueado</span>
+            </div>
+            <div class="content">
+                <p>Donde se detallan los porcentajes de evaluación.</p>
+                <div class="user-content-filled">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px;">
+                        <thead>
+                            <tr style="background-color: var(--primary-blue); color: white;">
+                                <th style="padding: 8px; border: 1px solid var(--border-color);">Rubro</th>
+                                <th style="padding: 8px; border: 1px solid var(--border-color);">1er Parcial</th>
+                                <th style="padding: 8px; border: 1px solid var(--border-color);">2do Parcial</th>
+                                <th style="padding: 8px; border: 1px solid var(--border-color);">3er Parcial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">Evidencia de Conocimiento</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">40%</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">40%</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">10%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">Evidencia de Desempeño</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">20%</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">20%</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">10%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">Evidencia de Producto</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">30%</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">30%</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">30%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">Proyecto Integrador</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">10%</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color);">10%</td>
+                                <td style="padding: 8px; border: 1px solid var(--border-color); font-weight: bold;">50%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="challenge">
+                <h3>Desafío del Oráculo</h3>
+                
+                <div class="question">
+                    <label>1. ¿Cuánto vale el Proyecto Integrador en el 3er Parcial?</label>
+                    <select id="q2-1">
+                        <option value="">Selecciona...</option>
+                        <option value="10">10%</option>
+                        <option value="30">30%</option>
+                        <option value="50">50%</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label>2. ¿Cuánto vale la Evidencia de Conocimiento en el 1er Parcial?</label>
+                    <select id="q2-2">
+                        <option value="">Selecciona...</option>
+                        <option value="20">20%</option>
+                        <option value="30">30%</option>
+                        <option value="40">40%</option>
+                    </select>
+                </div>
+                
+                <button onclick="checkAnswers(2, '50', '40')" class="btn-check">Verificar Respuestas</button>
+                <p id="msg-2" class="message"></p>
+                
+                <div id="commitment-2" class="commitment hidden">
+                    <label>
+                        <input type="checkbox" id="chk-2">
+                        <strong>Check de Compromiso:</strong> Entiendo cómo seré evaluado en el semestre.
+                    </label>
+                    <button onclick="unlockNext(2)" class="btn-unlock">Desbloquear Siguiente Nivel</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nivel 3: Skills a desbloquear -->
+        <section id="level-3" class="level locked">
+            <div class="level-header">
+                <h2>Nivel 3: Skills a Desbloquear</h2>
+                <span class="status-badge locked">Bloqueado</span>
+            </div>
+            <div class="content">
+                <p>Aquí se detallan el objetivo general y particular de la materia.</p>
+                <div class="user-content-filled" style="text-align: left;">
+                    <h4>Objetivo:</h4>
+                    <p>Desarrollará aplicaciones móviles mediante lenguajes de programación, entornos de desarrollo, diseño de interfaces de usuario, arquitecturas, patrones de diseño y herramientas de programación móvil.</p>
+                    <br>
+                    <h4>Competencias que adquiere:</h4>
+                    <p>Soluciones tecnológicas multiplataforma de software web y móvil utilizando programación orientada a objetos, frameworks, bases de datos, estándares de calidad y diseño.</p>
+                </div>
+            </div>
+            <div class="challenge">
+                <h3>Desafío de Skills</h3>
+                
+                <div class="question">
+                    <label>1. ¿Qué tipo de soluciones tecnológicas se desarrollarán?</label>
+                    <select id="q3-1">
+                        <option value="">Selecciona...</option>
+                        <option value="escritorio">Solo de escritorio</option>
+                        <option value="multiplataforma">Multiplataforma (web y móvil)</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label>2. ¿Se utilizará programación orientada a objetos?</label>
+                    <select id="q3-2">
+                        <option value="">Selecciona...</option>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                
+                <button onclick="checkAnswers(3, 'multiplataforma', 'si')" class="btn-check">Verificar Respuestas</button>
+                <p id="msg-3" class="message"></p>
+                
+                <div id="commitment-3" class="commitment hidden">
+                    <label>
+                        <input type="checkbox" id="chk-3">
+                        <strong>Check de Compromiso:</strong> Me comprometo a adquirir estas habilidades.
+                    </label>
+                    <button onclick="unlockNext(3)" class="btn-unlock">Desbloquear Siguiente Nivel</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nivel 4: La Línea del Tiempo -->
+        <section id="level-4" class="level locked">
+            <div class="level-header">
+                <h2>Nivel 4: La Línea del Tiempo</h2>
+                <span class="status-badge locked">Bloqueado</span>
+            </div>
+            <div class="content">
+                <p>Donde se muestran las fechas clave del semestre.</p>
+                <div class="user-content-filled">
+                    <ul style="text-align: left; list-style-type: none; padding: 0;">
+                        <li>📅 <strong>1er Parcial:</strong> 02-06-26</li>
+                        <li>📅 <strong>2do Parcial:</strong> 07-07-26</li>
+                        <li>📅 <strong>3er Parcial:</strong> 11-08-26</li>
+                        <li>🏆 <strong>Final:</strong> 17-08-26</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="challenge">
+                <h3>Desafío del Tiempo</h3>
+                
+                <div class="question">
+                    <label>1. ¿Cuándo es el 1er Parcial?</label>
+                    <select id="q4-1">
+                        <option value="">Selecciona...</option>
+                        <option value="02-06-26">02-06-26</option>
+                        <option value="07-07-26">07-07-26</option>
+                    </select>
+                </div>
+                
+                <div class="question">
+                    <label>2. ¿Cuándo es el Examen Final?</label>
+                    <select id="q4-2">
+                        <option value="">Selecciona...</option>
+                        <option value="11-08-26">11-08-26</option>
+                        <option value="17-08-26">17-08-26</option>
+                    </select>
+                </div>
+                
+                <button onclick="checkAnswers(4, '02-06-26', '17-08-26')" class="btn-check">Verificar Respuestas</button>
+                <p id="msg-4" class="message"></p>
+                
+                <div id="commitment-4" class="commitment hidden">
+                    <label>
+                        <input type="checkbox" id="chk-4">
+                        <strong>Check de Compromiso:</strong> Tengo presentes las fechas clave.
+                    </label>
+                    <button onclick="finishAdventure()" class="btn-unlock final">Completar Aventura</button>
+                </div>
+            </div>
+        </section>
+        
+        <div id="victory-screen" class="victory hidden">
+            <h2>🎉 ¡Felicidades! 🎉</h2>
+            <p>Has completado la Aventura de Programación Móvil.</p>
+            <p>Estás listo para iniciar el semestre con todo el conocimiento necesario.</p>
+        </div>
+
+    </main>
+
+    <script>
+        function checkAnswers(level, ans1, ans2) {
+            const q1 = document.getElementById(`q${level}-1`).value;
+            const q2 = document.getElementById(`q${level}-2`).value;
+            const msg = document.getElementById(`msg-${level}`);
+            const commitment = document.getElementById(`commitment-${level}`);
+
+            if (!q1 || !q2) {
+                msg.textContent = "Por favor, responde ambas preguntas.";
+                msg.className = "message error";
+                commitment.classList.add("hidden");
+                return;
+            }
+
+            if (q1 === ans1 && q2 === ans2) {
+                msg.textContent = "¡Respuestas correctas! Ahora marca tu compromiso.";
+                msg.className = "message success";
+                commitment.classList.remove("hidden");
+                
+                // Deshabilitar inputs
+                document.getElementById(`q${level}-1`).disabled = true;
+                document.getElementById(`q${level}-2`).disabled = true;
+                event.target.style.display = 'none'; // ocultar botón de verificar
+            } else {
+                msg.textContent = "Al menos una respuesta es incorrecta. Inténtalo de nuevo.";
+                msg.className = "message error";
+                commitment.classList.add("hidden");
+            }
+        }
+
+        function unlockNext(currentLevel) {
+            const chk = document.getElementById(`chk-${currentLevel}`);
+            
+            if (!chk.checked) {
+                alert("Debes marcar el Check de Compromiso para avanzar.");
+                return;
+            }
+
+            const nextLevel = currentLevel + 1;
+            
+            // Marcar el actual como completado
+            const currentSection = document.getElementById(`level-${currentLevel}`);
+            currentSection.classList.add("completed");
+            currentSection.querySelector(".status-badge").textContent = "Completado";
+            currentSection.querySelector(".status-badge").className = "status-badge completed";
+            document.getElementById(`commitment-${currentLevel}`).style.display = 'none'; // Ocultar el botón y checkbox para limpiar
+            
+            // Si hay siguiente nivel, desbloquearlo
+            if (nextLevel <= 4) {
+                const nextSection = document.getElementById(`level-${nextLevel}`);
+                nextSection.classList.remove("locked");
+                nextSection.classList.add("active");
+                nextSection.querySelector(".status-badge").textContent = "En curso";
+                nextSection.querySelector(".status-badge").className = "status-badge in-progress";
+                
+                // Scroll suave a la siguiente sección
+                nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function finishAdventure() {
+            const chk = document.getElementById(`chk-4`);
+            if (!chk.checked) {
+                alert("Debes marcar el Check de Compromiso para finalizar.");
+                return;
+            }
+            
+            const currentSection = document.getElementById(`level-4`);
+            currentSection.classList.add("completed");
+            currentSection.querySelector(".status-badge").textContent = "Completado";
+            currentSection.querySelector(".status-badge").className = "status-badge completed";
+            document.getElementById(`commitment-4`).style.display = 'none';
+            
+            const victory = document.getElementById('victory-screen');
+            victory.classList.remove('hidden');
+            victory.classList.add('visible');
+            
+            victory.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>
