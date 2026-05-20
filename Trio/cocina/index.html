@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafetería - Gestión de Productos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="contenedor">
+        <h1>Gestión de Productos</h1>
+
+        <div id="formulario-producto">
+            <h2 id="titulo-formulario">Agregar Producto</h2>
+            <input type="hidden" id="producto-id">
+            <div class="grupo-formulario">
+                <label for="producto-nombre">Nombre:</label>
+                <input type="text" id="producto-nombre" placeholder="Ej: Café Americano">
+            </div>
+            <div class="grupo-formulario">
+                <label for="producto-tipo">Tipo:</label>
+                <select id="producto-tipo">
+                    <option value="Comida">Comida</option>
+                    <option value="Bebida">Bebida</option>
+                </select>
+            </div>
+            <div class="grupo-formulario">
+                <label for="producto-precio">Precio:</label>
+                <input type="number" id="producto-precio" placeholder="Ej: 50.00">
+            </div>
+            <button id="btn-guardar" onclick="guardarProducto()">Guardar</button>
+            <button onclick="limpiarFormulario()">Cancelar</button>
+        </div>
+
+        <h2>Lista de Productos</h2>
+        <table id="tabla-productos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="lista-productos">
+            </tbody>
+        </table>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
