@@ -1,5 +1,6 @@
 const readline = require('readline/promises');
 const { stdin: input, stdout: output } = require('process');
+const caja = require('./caja');
 const cocinaMenu = require('./cocina');
 const clienteMenu = require('./cliente');
 
@@ -32,8 +33,7 @@ async function main() {
 
     switch (opcion.trim()) {
       case '1':
-        console.log("\n--> Módulo de Caja aún no implementado.");
-        await rl.question("Dale ENTER para continuar...");
+        await caja.cajaMenu(rl);
         break;
       case '2':
         await cocinaMenu(rl);
