@@ -1,26 +1,7 @@
-const readline = require('readline/promises');
-const { stdin: input, stdout: output } = require('process');
-
-const productos = [
-  { id: 1, nombre: 'Espresso Solo', precio: 2.50, stock: 15 },
-  { id: 2, nombre: 'Cafe Americano', precio: 3.00, stock: 20 },
-  { id: 3, nombre: 'Capuccino Tradicional', precio: 4.00, stock: 12 },
-  { id: 4, nombre: 'Latte Macchiato', precio: 4.50, stock: 10 },
-  { id: 5, nombre: 'Caramel Frappuccino', precio: 5.50, stock: 8 },
-  { id: 6, nombre: 'Muffin de Chocolate', precio: 3.50, stock: 15 }
-];
-
-const pedidos = [];
-let contadorPedidos = 1;
-
-const rl = readline.createInterface({ input, output });
-
-function limpiarConsola() {
-  console.clear();
-}
+const db = require('./db');
 
 function mostrarBanner() {
-  limpiarConsola();
+  console.clear();
   console.log("**************************************************");
   console.log("*            BIENVENIDO A COFFEE SHOP            *");
   console.log("**************************************************");
@@ -38,23 +19,32 @@ function mostrarMenu() {
 function mostrarTablaProductos() {
   console.log("");
   console.log("=== LISTA DE PRODUCTOS DISPONIBLES ===");
-  productos.forEach(p => {
-    console.log("ID: " + p.id + " | " + p.nombre.padEnd(23) + " | Precio: $" + p.precio.toFixed(2) + " | Stock: " + p.stock);
-  });
+  if (db.productos.length === 0) {
+    console.log("Actualmente no hay productos disponibles.");
+  } else {
+    db.productos.forEach(p => {
+      console.log("ID: " + p.id + " | " + p.nombre.padEnd(20) + " | Precio: $" + p.precio.toFixed(2) + " | Stock: " + p.stock);
+    });
+  }
   console.log("=======================================");
 }
 
-async function consultarProductos() {
+async function consultarProductos(rl) {
   mostrarBanner();
   mostrarTablaProductos();
   console.log("--------------------------------------------------");
   await rl.question("--> Dale ENTER para regresar al menu...");
 }
 
-async function crearPedido() {
+async function crearPedido(rl) {
   mostrarBanner();
   console.log("\n--- REGISTRO DE NUEVO PEDIDO ---");
   mostrarTablaProductos();
+
+  if (db.productos.length === 0) {
+    await rl.question("\n--> No hay productos para pedir. Dale ENTER para volver...");
+    return;
+  }
 
   let cliente = "";
   while (cliente.trim() === "") {
@@ -71,7 +61,7 @@ async function crearPedido() {
     const idInput = await rl.question("\nIngrese el ID del cafe a comprar: ");
     const prodId = parseInt(idInput);
 
-    const producto = productos.find(p => p.id === prodId);
+    const producto = db.productos.find(p => p.id === prodId);
     if (!producto) {
       console.log("--> ¡Error! Ese ID de cafe no existe. Intenta con otro.");
       continue;
@@ -132,7 +122,7 @@ async function crearPedido() {
     total += item.subtotal;
   });
 
-  const idPedido = "PED-" + String(contadorPedidos).padStart(3, '0');
+  const idPedido = "PED-" + String(db.idPedidoActual).padStart(3, '0');
 
   mostrarBanner();
   console.log("\n--- CONFIRMACION DE COMPRA - " + idPedido + " ---");
@@ -154,7 +144,7 @@ async function crearPedido() {
       item.producto.stock -= item.cantidad;
     });
 
-    pedidos.push({
+    db.pedidos.push({
       id: idPedido,
       cliente: cliente,
       fecha: new Date(),
@@ -162,7 +152,7 @@ async function crearPedido() {
       total: total
     });
 
-    contadorPedidos++;
+    db.idPedidoActual++;
     console.log("\n--> ¡Listo! Pedido " + idPedido + " registrado y stock descontado.");
   } else {
     console.log("\n--> Pedido cancelado. No se realizo ningun cambio.");
@@ -172,18 +162,18 @@ async function crearPedido() {
   await rl.question("--> Dale ENTER para regresar al menu...");
 }
 
-async function listarPedidos() {
+async function listarPedidos(rl) {
   mostrarBanner();
   console.log("\n=== HISTORIAL DE PEDIDOS ===");
 
-  if (pedidos.length === 0) {
+  if (db.pedidos.length === 0) {
     console.log("\n--> ¡Aviso! No hay ningun pedido guardado todavia.");
     console.log("--------------------------------------------------");
     await rl.question("--> Dale ENTER para volver...");
     return;
   }
 
-  pedidos.forEach(p => {
+  db.pedidos.forEach(p => {
     console.log("\n==================================================");
     console.log("Pedido ID: " + p.id + " | Cliente: " + p.cliente);
     console.log("Fecha: " + p.fecha.toLocaleString());
@@ -200,7 +190,7 @@ async function listarPedidos() {
   await rl.question("--> Dale ENTER para regresar al menu...");
 }
 
-async function main() {
+async function clienteMenu(rl) {
   let salir = false;
   
   while (!salir) {
@@ -211,19 +201,16 @@ async function main() {
     
     switch (opcion.trim()) {
       case '1':
-        await consultarProductos();
+        await consultarProductos(rl);
         break;
       case '2':
-        await crearPedido();
+        await crearPedido(rl);
         break;
       case '3':
-        await listarPedidos();
+        await listarPedidos(rl);
         break;
       case '4':
-        limpiarConsola();
-        console.log("\n¡Gracias por venir! ¡Vuelve pronto por otro cafe!\n");
         salir = true;
-        rl.close();
         break;
       default:
         console.log("\n--> ¡Error! Esa opcion no vale. Elige un numero del 1 al 4.");
@@ -234,7 +221,4 @@ async function main() {
   }
 }
 
-main().catch(err => {
-  console.error("Error grave en el programa:", err);
-  rl.close();
-});
+module.exports = clienteMenu;
