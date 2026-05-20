@@ -10,11 +10,12 @@ async function cocinaMenu(rl) {
     console.log("**************************************************");
     console.log("1. Ver lista de productos");
     console.log("2. Agregar nuevo producto");
-    console.log("3. Eliminar producto");
-    console.log("4. Volver al menú principal");
+    console.log("3. Editar producto");
+    console.log("4. Eliminar producto");
+    console.log("5. Volver al menú principal");
     console.log("**************************************************");
     
-    const opcion = await rl.question("Elija una opción (1-4): ");
+    const opcion = await rl.question("Elija una opción (1-5): ");
     
     switch (opcion.trim()) {
       case '1':
@@ -25,9 +26,12 @@ async function cocinaMenu(rl) {
         await agregarProducto(rl);
         break;
       case '3':
-        await eliminarProducto(rl);
+        await editarProducto(rl);
         break;
       case '4':
+        await eliminarProducto(rl);
+        break;
+      case '5':
         salir = true;
         break;
       default:
@@ -76,6 +80,44 @@ async function agregarProducto(rl) {
     stock: stock
   });
   console.log("Producto agregado con éxito.");
+  await rl.question("ENTER para continuar...");
+}
+
+async function editarProducto(rl) {
+  mostrarProductos();
+  const idInput = await rl.question("\nIngrese ID del producto a editar: ");
+  const id = parseInt(idInput);
+  
+  const producto = db.productos.find(p => p.id === id);
+  if (!producto) {
+    console.log("Producto no encontrado.");
+    await rl.question("ENTER para continuar...");
+    return;
+  }
+  
+  console.log(`\nEditando producto: ${producto.nombre} (Deje en blanco para mantener el valor actual)`);
+  
+  const nombre = await rl.question(`Nombre (${producto.nombre}): `);
+  if (nombre.trim()) producto.nombre = nombre.trim();
+  
+  const tipo = await rl.question(`Tipo (${producto.tipo}): `);
+  if (tipo.trim()) producto.tipo = tipo.trim();
+  
+  const precioInput = await rl.question(`Precio (${producto.precio}): `);
+  if (precioInput.trim()) {
+    const precio = parseFloat(precioInput);
+    if (!isNaN(precio)) producto.precio = precio;
+    else console.log("Precio inválido, se mantiene el actual.");
+  }
+  
+  const stockInput = await rl.question(`Stock (${producto.stock}): `);
+  if (stockInput.trim()) {
+    const stock = parseInt(stockInput);
+    if (!isNaN(stock)) producto.stock = stock;
+    else console.log("Stock inválido, se mantiene el actual.");
+  }
+  
+  console.log("\nProducto actualizado con éxito.");
   await rl.question("ENTER para continuar...");
 }
 
