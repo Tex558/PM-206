@@ -1,5 +1,7 @@
 const db = require('./db');
 
+const IVA = 0.16;
+
 function mostrarTablaProductos() {
   console.log("");
   console.log("=== LISTA DE PRODUCTOS DISPONIBLES ===");
@@ -7,7 +9,8 @@ function mostrarTablaProductos() {
     console.log("Actualmente no hay productos disponibles.");
   } else {
     db.productos.forEach(p => {
-      console.log(`ID: ${p.id} | ${p.nombre.padEnd(20)} | Precio: $${p.precio.toFixed(2)} | Stock: ${p.stock}`);
+      const { id, nombre, precio, stock } = p;
+      console.log(`ID: ${id} | ${nombre.padEnd(20)} | Precio: $${precio.toFixed(2)} | Stock: ${stock}`);
     });
   }
   console.log("=======================================");
@@ -52,7 +55,9 @@ async function crearPedido(rl) {
       continue;
     }
 
-    console.log(`Seleccionado: ${producto.nombre} | Precio: $${producto.precio.toFixed(2)} | Stock actual: ${producto.stock}`);
+
+    const { nombre, precio, stock } = producto;
+    console.log(`Seleccionado: ${nombre} | Precio: $${precio.toFixed(2)} | Stock actual: ${stock}`);
 
     let cantidad = 0;
     while (true) {
@@ -97,11 +102,10 @@ async function crearPedido(rl) {
     return;
   }
 
-  let total = 0;
-  itemsPedido.forEach(item => {
-    total += item.subtotal;
-  });
 
+  const subtotal = itemsPedido.reduce((acumulador, { subtotal }) => acumulador + subtotal, 0);
+  const iva = subtotal * IVA;
+  const total = subtotal + iva;
   const idPedido = "PED-" + String(db.idPedidoActual).padStart(3, '0');
 
   console.clear();
@@ -112,10 +116,14 @@ async function crearPedido(rl) {
   
   console.log("Detalle de la compra:");
   itemsPedido.forEach(item => {
-    console.log(`- ${item.producto.nombre.padEnd(25)} x${item.cantidad} | Subtotal: $${item.subtotal.toFixed(2)}`);
+    const { producto: { nombre }, cantidad, subtotal: subtotalItem } = item;
+    console.log(`- ${nombre.padEnd(25)} x${cantidad} | Subtotal: $${subtotalItem.toFixed(2)}`);
   });
+
   console.log("--------------------------------------------------");
-  console.log("TOTAL A PAGAR: $" + total.toFixed(2));
+  console.log(`Subtotal (sin IVA):  $${subtotal.toFixed(2)}`);
+  console.log(`IVA (16%):           $${iva.toFixed(2)}`);
+  console.log(`TOTAL A PAGAR:       $${total.toFixed(2)}`);
   console.log("--------------------------------------------------");
 
   const confirmar = await rl.question("\n¿Guardar este pedido en el sistema y procesar pago? (s/n): ");
@@ -129,6 +137,8 @@ async function crearPedido(rl) {
       cliente: cliente,
       fecha: new Date(),
       items: itemsPedido,
+      subtotal: subtotal,
+      iva: iva,
       total: total
     });
 
@@ -154,15 +164,22 @@ async function listarPedidos(rl) {
   }
 
   db.pedidos.forEach(p => {
+    const { id, cliente, fecha, items, subtotal, iva, total } = p;
+
     console.log("\n==================================================");
-    console.log(`Pedido ID: ${p.id} | Cliente: ${p.cliente}`);
-    console.log(`Fecha: ${p.fecha.toLocaleString()}`);
+    console.log(`Pedido ID: ${id} | Cliente: ${cliente}`);
+    console.log(`Fecha: ${fecha.toLocaleString()}`);
     console.log("--------------------------------------------------");
-    p.items.forEach(item => {
-      console.log(`  - ${item.producto.nombre.padEnd(22)} x${item.cantidad} | Subtotal: $${item.subtotal.toFixed(2)}`);
+
+    items.forEach(item => {
+      const { producto: { nombre }, cantidad, subtotal: subtotalItem } = item;
+      console.log(`  - ${nombre.padEnd(22)} x${cantidad} | Subtotal: $${subtotalItem.toFixed(2)}`);
     });
+
     console.log("--------------------------------------------------");
-    console.log(`Total del Pedido: $${p.total.toFixed(2)}`);
+    console.log(`Subtotal (sin IVA):  $${subtotal.toFixed(2)}`);
+    console.log(`IVA (16%):           $${iva.toFixed(2)}`);
+    console.log(`Total del Pedido:    $${total.toFixed(2)}`);
     console.log("==================================================");
   });
 
