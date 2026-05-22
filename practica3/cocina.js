@@ -5,9 +5,7 @@ async function cocinaMenu(rl) {
   
   while (!salir) {
     console.clear();
-    console.log("**************************************************");
-    console.log("*                 MÓDULO COCINA                  *");
-    console.log("**************************************************");
+    console.log("MÓDULO COCINA\n");
     console.log("1. Ver lista de productos");
     console.log("2. Agregar nuevo producto");
     console.log("3. Editar producto");
@@ -15,8 +13,7 @@ async function cocinaMenu(rl) {
     console.log("5. Buscar productos (Filtrar)");
     console.log("6. Menú Promociones");
     console.log("7. Volver al menú principal");
-    console.log("**************************************************");
-    
+        
     const opcion = await rl.question("Elija una opción (1-7): ");
     
     switch (opcion.trim()) {
@@ -51,7 +48,7 @@ async function cocinaMenu(rl) {
 }
 
 function mostrarProductos(lista = db.productos) {
-  console.log("\n--- LISTA DE PRODUCTOS ---");
+  console.log("\nLISTA DE PRODUCTOS\n");
   if (lista.length === 0) {
     console.log("No hay productos para mostrar.");
     return;
@@ -59,11 +56,10 @@ function mostrarProductos(lista = db.productos) {
   lista.forEach(p => {
     console.log(`ID: ${p.id} | ${p.nombre.padEnd(20)} | Tipo: ${p.tipo.padEnd(8)} | Precio: $${p.precio.toFixed(2)} | Stock: ${p.stock}`);
   });
-  console.log("--------------------------");
-}
+  }
 
 async function agregarProducto(rl) {
-  console.log("\n--- AGREGAR PRODUCTO ---");
+  console.log("\nAGREGAR PRODUCTO\n");
   const nombre = await rl.question("Nombre del producto: ");
   if (!nombre.trim()) return console.log("Nombre inválido.");
   
@@ -145,7 +141,7 @@ async function eliminarProducto(rl) {
 }
 
 async function buscarProductos(rl) {
-  console.log("\n--- BUSCAR PRODUCTOS ---");
+  console.log("\nBUSCAR PRODUCTOS\n");
   console.log("1. Productos baratos (menos de $50)");
   console.log("2. Productos caros ($50 o más)");
   console.log("3. Sólo Bebidas");
@@ -187,19 +183,16 @@ async function menuPromociones(rl) {
   
   while (!salir) {
     console.clear();
-    console.log("**************************************************");
-    console.log("*               MENÚ PROMOCIONES                 *");
-    console.log("**************************************************");
+    console.log("MENÚ PROMOCIONES\n");
     console.log("1. Ver promociones");
     console.log("2. Agregar promoción");
     console.log("3. Volver al menú cocina");
-    console.log("**************************************************");
-    
+        
     const opcion = await rl.question("Elija una opción (1-3): ");
     
     switch(opcion.trim()) {
       case '1':
-        console.log("\n--- LISTA DE PROMOCIONES ---");
+        console.log("\nLISTA DE PROMOCIONES\n");
         if (!db.promociones || db.promociones.length === 0) {
           console.log("No hay promociones registradas.");
         } else {
@@ -210,7 +203,7 @@ async function menuPromociones(rl) {
         await rl.question("--> Dale ENTER para continuar...");
         break;
       case '2':
-        console.log("\n--- AGREGAR PROMOCIÓN ---");
+        console.log("\nAGREGAR PROMOCIÓN\n");
         const nombre = await rl.question("Nombre de la promoción: ");
         const descuentoInput = await rl.question("Porcentaje de descuento (ej. 15): ");
         const descuento = parseFloat(descuentoInput);

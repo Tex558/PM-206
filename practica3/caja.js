@@ -1,10 +1,9 @@
-const db = require('./db');
+import db from './db.js';
 
 const IVA = 0.16;
 
 function mostrarTablaProductos() {
-  console.log("");
-  console.log("=== LISTA DE PRODUCTOS DISPONIBLES ===");
+  console.log("\nLISTA DE PRODUCTOS DISPONIBLES");
   if (db.productos.length === 0) {
     console.log("Actualmente no hay productos disponibles.");
   } else {
@@ -13,14 +12,12 @@ function mostrarTablaProductos() {
       console.log(`ID: ${id} | ${nombre.padEnd(20)} | Precio: $${precio.toFixed(2)} | Stock: ${stock}`);
     });
   }
-  console.log("=======================================");
+  console.log("");
 }
 
 async function crearPedido(rl) {
   console.clear();
-  console.log("**************************************************");
-  console.log("*            NUEVO PEDIDO - CAJA                 *");
-  console.log("**************************************************");
+  console.log("NUEVO PEDIDO - CAJA\n");
   
   mostrarTablaProductos();
 
@@ -97,8 +94,7 @@ async function crearPedido(rl) {
 
   if (itemsPedido.length === 0) {
     console.log("\n--> Pedido cancelado. No agregaste nada.");
-    console.log("--------------------------------------------------");
-    await rl.question("--> Dale ENTER para volver...");
+    await rl.question("\n--> Dale ENTER para volver...");
     return;
   }
 
@@ -109,10 +105,9 @@ async function crearPedido(rl) {
   const idPedido = "PED-" + String(db.idPedidoActual).padStart(3, '0');
 
   console.clear();
-  console.log("\n--- CONFIRMACIÓN DE COMPRA - " + idPedido + " ---");
+  console.log("\nCONFIRMACIÓN DE COMPRA - " + idPedido);
   console.log("Cliente: " + cliente);
-  console.log("Fecha:   " + new Date().toLocaleString());
-  console.log("--------------------------------------------------");
+  console.log("Fecha:   " + new Date().toLocaleString() + "\n");
   
   console.log("Detalle de la compra:");
   itemsPedido.forEach(item => {
@@ -120,11 +115,9 @@ async function crearPedido(rl) {
     console.log(`- ${nombre.padEnd(25)} x${cantidad} | Subtotal: $${subtotalItem.toFixed(2)}`);
   });
 
-  console.log("--------------------------------------------------");
-  console.log(`Subtotal (sin IVA):  $${subtotal.toFixed(2)}`);
+  console.log(`\nSubtotal (sin IVA):  $${subtotal.toFixed(2)}`);
   console.log(`IVA (16%):           $${iva.toFixed(2)}`);
-  console.log(`TOTAL A PAGAR:       $${total.toFixed(2)}`);
-  console.log("--------------------------------------------------");
+  console.log(`TOTAL A PAGAR:       $${total.toFixed(2)}\n`);
 
   const confirmar = await rl.question("\n¿Guardar este pedido en el sistema y procesar pago? (s/n): ");
   if (confirmar.toLowerCase() === 's' || confirmar.toLowerCase() === 'si') {
@@ -148,43 +141,36 @@ async function crearPedido(rl) {
     console.log("\n--> Pedido cancelado. No se realizó ningún cambio.");
   }
 
-  console.log("--------------------------------------------------");
-  await rl.question("--> Dale ENTER para continuar...");
+  await rl.question("\n--> Dale ENTER para continuar...");
 }
 
 async function listarPedidos(rl) {
   console.clear();
-  console.log("\n=== HISTORIAL DE PEDIDOS ===");
+  console.log("\nHISTORIAL DE PEDIDOS\n");
 
   if (db.pedidos.length === 0) {
     console.log("\n--> ¡Aviso! No hay ningún pedido guardado todavía.");
-    console.log("--------------------------------------------------");
-    await rl.question("--> Dale ENTER para volver...");
+    await rl.question("\n--> Dale ENTER para volver...");
     return;
   }
 
   db.pedidos.forEach(p => {
     const { id, cliente, fecha, items, subtotal, iva, total } = p;
 
-    console.log("\n==================================================");
-    console.log(`Pedido ID: ${id} | Cliente: ${cliente}`);
+    console.log(`\nPedido ID: ${id} | Cliente: ${cliente}`);
     console.log(`Fecha: ${fecha.toLocaleString()}`);
-    console.log("--------------------------------------------------");
 
     items.forEach(item => {
       const { producto: { nombre }, cantidad, subtotal: subtotalItem } = item;
       console.log(`  - ${nombre.padEnd(22)} x${cantidad} | Subtotal: $${subtotalItem.toFixed(2)}`);
     });
 
-    console.log("--------------------------------------------------");
-    console.log(`Subtotal (sin IVA):  $${subtotal.toFixed(2)}`);
-    console.log(`IVA (16%):           $${iva.toFixed(2)}`);
-    console.log(`Total del Pedido:    $${total.toFixed(2)}`);
-    console.log("==================================================");
+    console.log(`\nSubtotal (sin IVA):  $${(subtotal || 0).toFixed(2)}`);
+    console.log(`IVA (16%):           $${(iva || 0).toFixed(2)}`);
+    console.log(`Total del Pedido:    $${(total || 0).toFixed(2)}`);
   });
 
-  console.log("--------------------------------------------------");
-  await rl.question("--> Dale ENTER para regresar...");
+  await rl.question("\n--> Dale ENTER para regresar...");
 }
 
 async function cajaMenu(rl) {
@@ -192,13 +178,10 @@ async function cajaMenu(rl) {
   
   while (!salir) {
     console.clear();
-    console.log("**************************************************");
-    console.log("*                  MÓDULO CAJA                   *");
-    console.log("**************************************************");
+    console.log("MÓDULO CAJA\n");
     console.log("1. Crear nuevo pedido (Punto de Venta)");
     console.log("2. Listar todos los pedidos");
-    console.log("3. Volver al menú principal");
-    console.log("**************************************************");
+    console.log("3. Volver al menú principal\n");
     
     const opcion = await rl.question("Elija una opción (1-3): ");
     
@@ -220,7 +203,7 @@ async function cajaMenu(rl) {
   }
 }
 
-module.exports = {
+export {
   cajaMenu,
   crearPedido,
   listarPedidos

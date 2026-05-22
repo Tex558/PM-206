@@ -1,7 +1,8 @@
 import readline from 'readline/promises';
 import { stdin as input, stdout as output } from 'process';
 import cocinaMenu from './cocina.js';
-
+import { cajaMenu } from './caja.js';
+import clienteMenu from './cliente.js';
 const rl = readline.createInterface({ input, output });
 
 function limpiarConsola() {
@@ -10,9 +11,7 @@ function limpiarConsola() {
 
 function mostrarBanner() {
   limpiarConsola();
-  console.log("**************************************************");
-  console.log("*            SISTEMA CENTRAL DEL LOCAL           *");
-  console.log("**************************************************");
+  console.log("SISTEMA CENTRAL DEL LOCAL\n");
 }
 
 async function main() {
@@ -20,26 +19,23 @@ async function main() {
 
   while (!salir) {
     mostrarBanner();
-    console.log("\n--- MENÚ PRINCIPAL ---");
-    console.log("1. Caja (En desarrollo)");
+    console.log("MENÚ PRINCIPAL");
+    console.log("1. Caja");
     console.log("2. Cocina");
-    console.log("3. Cliente (En desarrollo)");
-    console.log("4. Salir");
-    console.log("**************************************************");
+    console.log("3. Cliente");
+    console.log("4. Salir\n");
 
     const opcion = await rl.question("Elija un módulo (1-4): ");
 
     switch (opcion.trim()) {
       case '1':
-        console.log("\nMódulo Caja en desarrollo.");
-        await rl.question("Dale ENTER para continuar...");
+        await cajaMenu(rl);
         break;
       case '2':
         await cocinaMenu(rl);
         break;
       case '3':
-        console.log("\nMódulo Cliente en desarrollo.");
-        await rl.question("Dale ENTER para continuar...");
+        await clienteMenu(rl);
         break;
       case '4':
         limpiarConsola();

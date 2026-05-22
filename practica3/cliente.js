@@ -1,20 +1,7 @@
-const readline = require('readline/promises');
-const { stdin: input, stdout: output } = require('process');
+import db from './db.js';
 
-const productos = [
-  { id: 1, nombre: 'Espresso Solo', precio: 45.00, stock: 15, categoria: 'Bebidas Calientes' },
-  { id: 2, nombre: 'Cafe Americano', precio: 58.00, stock: 20, categoria: 'Bebidas Calientes' },
-  { id: 3, nombre: 'Capuccino Tradicional', precio: 72.00, stock: 12, categoria: 'Bebidas Calientes' },
-  { id: 4, nombre: 'Latte Macchiato', precio: 78.00, stock: 10, categoria: 'Bebidas Calientes' },
-  { id: 5, nombre: 'Caramel Frappuccino', precio: 89.00, stock: 8, categoria: 'Bebidas Frias' },
-  { id: 6, nombre: 'Muffin de Chocolate', precio: 45.00, stock: 15, categoria: 'Panaderia' }
-];
-
-const pedidos = [];
-let contadorPedidos = 1;
 let carrito = [];
-
-const rl = readline.createInterface({ input, output });
+let rl;
 
 function limpiarConsola() {
   console.clear();
@@ -22,12 +9,9 @@ function limpiarConsola() {
 
 function mostrarBanner() {
   limpiarConsola();
-  console.log("**************************************************");
-  console.log("*            BIENVENIDO A COFFEE SHOP            *");
-  console.log("**************************************************");
-  console.log("--> PROMO: 10% de descuento en compras de mas de $150!");
-  console.log("--> COMBO: Compra Cafe Americano + Muffin por solo $90!");
-  console.log("**************************************************");
+  
+  console.log("BIENVENIDO A COFFEE SHOP\n");
+  
 }
 
 function mostrarMenu() {
@@ -36,47 +20,45 @@ function mostrarMenu() {
   console.log("2. Gestionar mi carrito y pagar pedido (" + carrito.length + " items)");
   console.log("3. Consultar mis pedidos (con filtros)");
   console.log("4. Ver promociones activas en detalle");
-  console.log("5. Salir del programa");
-  console.log("**************************************************");
+  console.log("5. Salir del programa\n");
 }
 
 function mostrarTablaProductos(lista) {
-  console.log("");
-  console.log("=== LISTA DE PRODUCTOS DISPONIBLES ===");
+  console.log("\nLISTA DE PRODUCTOS DISPONIBLES");
   lista.forEach(p => {
-    console.log("ID: " + p.id + " | " + p.nombre.padEnd(23) + " | Categoria: " + p.categoria.padEnd(18) + " | Precio: $" + p.precio.toFixed(2) + " | Stock: " + p.stock);
+    const tipo = p.tipo || 'General';
+    console.log("ID: " + p.id + " | " + p.nombre.padEnd(23) + " | Tipo: " + tipo.padEnd(8) + " | Precio: $" + p.precio.toFixed(2) + " | Stock: " + p.stock);
   });
-  console.log("=======================================");
+  console.log("");
 }
 
 async function consultarProductos() {
   mostrarBanner();
-  console.log("\n--- FILTRAR CATALOGO DE PRODUCTOS ---");
+  console.log("\nFILTRAR CATALOGO DE PRODUCTOS");
   console.log("1. Mostrar todo el catalogo");
-  console.log("2. Mostrar Bebidas (Calientes y Frias)");
-  console.log("3. Mostrar Comida (Panaderia)");
-  console.log("4. Mostrar Productos baratos (Hasta $55 pesos)");
-  console.log("5. Mostrar Productos caros (Mas de $55 pesos)");
-  console.log("--------------------------------------------------");
+  console.log("2. Mostrar Bebidas");
+  console.log("3. Mostrar Comidas");
+  console.log("4. Mostrar Productos baratos");
+  console.log("5. Mostrar Productos caros\n");
   
   const opFiltro = await rl.question("Elige como quieres filtrar (1-5): ");
-  let productosFiltrados = productos;
+  let productosFiltrados = db.productos;
   
   switch (opFiltro.trim()) {
     case '1':
-      productosFiltrados = productos;
+      productosFiltrados = db.productos;
       break;
     case '2':
-      productosFiltrados = productos.filter(p => p.categoria.startsWith('Bebidas'));
+      productosFiltrados = db.productos.filter(p => p.tipo && p.tipo.toLowerCase() === 'bebida');
       break;
     case '3':
-      productosFiltrados = productos.filter(p => p.categoria === 'Panaderia');
+      productosFiltrados = db.productos.filter(p => p.tipo && p.tipo.toLowerCase() === 'comida');
       break;
     case '4':
-      productosFiltrados = productos.filter(p => p.precio <= 55.00);
+      productosFiltrados = db.productos.filter(p => p.precio <= 55.00);
       break;
     case '5':
-      productosFiltrados = productos.filter(p => p.precio > 55.00);
+      productosFiltrados = db.productos.filter(p => p.precio > 55.00);
       break;
     default:
       console.log("--> Opcion no valida. Mostrando todo el catalogo por defecto.");
@@ -85,25 +67,22 @@ async function consultarProductos() {
   
   mostrarBanner();
   mostrarTablaProductos(productosFiltrados);
-  console.log("--------------------------------------------------");
   
   const agregarAlCarrito = await rl.question("¿Desea agregar algun producto de la lista a su carrito? (s/n): ");
   if (agregarAlCarrito.toLowerCase() === 's' || agregarAlCarrito.toLowerCase() === 'si') {
     const idInput = await rl.question("\nIngrese el ID del producto a agregar: ");
     const prodId = parseInt(idInput);
     
-    const producto = productos.find(p => p.id === prodId);
+    const producto = db.productos.find(p => p.id === prodId);
     if (!producto) {
       console.log("--> ¡Error! Ese ID de producto no existe.");
-      console.log("--------------------------------------------------");
-      await rl.question("--> Dale ENTER para regresar...");
+      await rl.question("\n--> Dale ENTER para regresar...");
       return;
     }
     
     if (producto.stock <= 0) {
       console.log("--> ¡Lo sentimos! Ya no tenemos stock de: " + producto.nombre);
-      console.log("--------------------------------------------------");
-      await rl.question("--> Dale ENTER para regresar...");
+      await rl.question("\n--> Dale ENTER para regresar...");
       return;
     }
     
@@ -112,15 +91,13 @@ async function consultarProductos() {
     
     if (isNaN(cantidad) || cantidad <= 0) {
       console.log("--> ¡Ojo! Tienes que llevar al menos 1 unidad.");
-      console.log("--------------------------------------------------");
-      await rl.question("--> Dale ENTER para regresar...");
+      await rl.question("\n--> Dale ENTER para regresar...");
       return;
     }
     
     if (cantidad > producto.stock) {
       console.log("--> ¡No hay tanto! Solo nos quedan " + producto.stock + " unidades.");
-      console.log("--------------------------------------------------");
-      await rl.question("--> Dale ENTER para regresar...");
+      await rl.question("\n--> Dale ENTER para regresar...");
       return;
     }
     
@@ -143,7 +120,7 @@ async function consultarProductos() {
     }
   }
   
-  console.log("--------------------------------------------------");
+  
   await rl.question("--> Dale ENTER para regresar al menu...");
 }
 
@@ -152,24 +129,22 @@ async function crearPedido() {
   
   while (!salirCarrito) {
     mostrarBanner();
-    console.log("\n--- GESTIONAR MI CARRITO DE COMPRAS ---");
+    console.log("\nGESTIONAR MI CARRITO DE COMPRAS");
     
     if (carrito.length === 0) {
       console.log("\nSu carrito de compras esta vacio.");
-      console.log("--------------------------------------------------");
-      console.log("1. Agregar producto al carrito (ver catalogo completo)");
-      console.log("2. Regresar al menu principal");
-      console.log("--------------------------------------------------");
+      console.log("\n1. Agregar producto al carrito (ver catalogo completo)");
+      console.log("2. Regresar al menu principal\n");
       
       const opVacia = await rl.question("Elige una opcion (1-2): ");
       if (opVacia.trim() === '1') {
         mostrarBanner();
-        mostrarTablaProductos(productos);
+        mostrarTablaProductos(db.productos);
         
         const idInput = await rl.question("\nIngrese el ID del producto a agregar: ");
         const prodId = parseInt(idInput);
         
-        const producto = productos.find(p => p.id === prodId);
+        const producto = db.productos.find(p => p.id === prodId);
         if (!producto) {
           console.log("--> ¡Error! Ese ID de producto no existe.");
           await new Promise(r => setTimeout(r, 1500));
@@ -215,57 +190,47 @@ async function crearPedido() {
       subtotalOriginal += item.subtotal;
     });
 
-    let descuentoCombo = 0;
-    const itemAmericano = carrito.find(item => item.producto.id === 2);
-    const itemMuffin = carrito.find(item => item.producto.id === 6);
-    
-    if (itemAmericano && itemMuffin) {
-      const parejasCombo = Math.min(itemAmericano.cantidad, itemMuffin.cantidad);
-      descuentoCombo = parejasCombo * 13.00;
+    let porcentajeDescuento = 0;
+    if (db.promociones && db.promociones.length > 0) {
+      db.promociones.forEach(promo => {
+        porcentajeDescuento += promo.descuento;
+      });
     }
+    if (porcentajeDescuento > 100) porcentajeDescuento = 100;
 
-    const subtotalConCombo = subtotalOriginal - descuentoCombo;
-    let descuentoMonto = 0;
-    if (subtotalConCombo > 150.00) {
-      descuentoMonto = subtotalConCombo * 0.10;
-    }
-
-    const totalFinal = subtotalConCombo - descuentoMonto;
+    const descuentoTotal = subtotalOriginal * (porcentajeDescuento / 100);
+    const totalFinal = subtotalOriginal - descuentoTotal;
 
     console.log("\nProductos en su carrito actual:");
     carrito.forEach(item => {
       console.log("- " + item.producto.nombre.padEnd(25) + " x" + item.cantidad + " | Subtotal: $" + item.subtotal.toFixed(2));
     });
-    console.log("--------------------------------------------------");
-    console.log("Subtotal original:            $" + subtotalOriginal.toFixed(2));
-    if (descuentoCombo > 0) {
-      console.log("Ahorro por combo (Americano+Muffin): -$" + descuentoCombo.toFixed(2));
+    console.log("");
+    console.log("Subtotal:                     $" + subtotalOriginal.toFixed(2));
+    if (descuentoTotal > 0) {
+      console.log(`Descuento (${porcentajeDescuento}%):              -$${descuentoTotal.toFixed(2)}`);
     }
-    if (descuentoMonto > 0) {
-      console.log("Descuento del 10% (> $150):         -$" + descuentoMonto.toFixed(2));
-    }
-    console.log("--------------------------------------------------");
-    console.log("TOTAL A PAGAR (PREVIO):       $" + totalFinal.toFixed(2));
-    console.log("--------------------------------------------------");
+    console.log("");
+    console.log("TOTAL A PAGAR:                $" + totalFinal.toFixed(2));
+    console.log("");
     
     console.log("1. Agregar mas productos al carrito");
     console.log("2. Quitar un producto del carrito");
     console.log("3. Confirmar pedido y pagar (Finalizar compra)");
     console.log("4. Vaciar todo el carrito");
-    console.log("5. Regresar al menu principal (conservar carrito)");
-    console.log("--------------------------------------------------");
+    console.log("5. Regresar al menu principal (conservar carrito)\n");
     
     const opCar = await rl.question("Elige una opcion (1-5): ");
     
     switch (opCar.trim()) {
       case '1':
         mostrarBanner();
-        mostrarTablaProductos(productos);
+        mostrarTablaProductos(db.productos);
         
         const idInput = await rl.question("\nIngrese el ID del producto a agregar: ");
         const prodId = parseInt(idInput);
         
-        const producto = productos.find(p => p.id === prodId);
+        const producto = db.productos.find(p => p.id === prodId);
         if (!producto) {
           console.log("--> ¡Error! Ese ID de producto no existe.");
           await new Promise(r => setTimeout(r, 1500));
@@ -352,28 +317,24 @@ async function crearPedido() {
           break;
         }
         
-        const idPedido = "PED-" + String(contadorPedidos).padStart(3, '0');
+        const idPedido = "PED-" + String(db.idPedidoActual).padStart(3, '0');
         
         mostrarBanner();
-        console.log("\n--- CONFIRMACION DE COMPRA - " + idPedido + " ---");
+        console.log("\nCONFIRMACION DE COMPRA - " + idPedido);
         console.log("Cliente: " + cliente);
-        console.log("Fecha:   " + new Date().toLocaleString());
-        console.log("--------------------------------------------------");
+        console.log("Fecha:   " + new Date().toLocaleString() + "\n");
         console.log("Detalle final:");
         carrito.forEach(item => {
           console.log("- " + item.producto.nombre.padEnd(25) + " x" + item.cantidad + " | Subtotal: $" + item.subtotal.toFixed(2));
         });
-        console.log("--------------------------------------------------");
-        console.log("Subtotal original:            $" + subtotalOriginal.toFixed(2));
-        if (descuentoCombo > 0) {
-          console.log("Ahorro por combo (Americano+Muffin): -$" + descuentoCombo.toFixed(2));
+        console.log("");
+        console.log("Subtotal:                     $" + subtotalOriginal.toFixed(2));
+        if (descuentoTotal > 0) {
+          console.log(`Descuento (${porcentajeDescuento}%):              -$${descuentoTotal.toFixed(2)}`);
         }
-        if (descuentoMonto > 0) {
-          console.log("Descuento del 10% (> $150):         -$" + descuentoMonto.toFixed(2));
-        }
-        console.log("--------------------------------------------------");
+        console.log("");
         console.log("TOTAL PAGADO:                 $" + totalFinal.toFixed(2));
-        console.log("--------------------------------------------------");
+        console.log("");
         
         const confirmar = await rl.question("\n¿Confirmar y pagar el pedido? (s/n): ");
         if (confirmar.toLowerCase() === 's' || confirmar.toLowerCase() === 'si') {
@@ -381,25 +342,25 @@ async function crearPedido() {
             item.producto.stock -= item.cantidad;
           });
           
-          pedidos.push({
+          db.pedidos.push({
             id: idPedido,
             cliente: cliente,
             fecha: new Date(),
             items: [...carrito],
-            subtotalOriginal: subtotalOriginal,
-            descuentoCombo: descuentoCombo,
-            descuentoMonto: descuentoMonto,
-            total: totalFinal
+            subtotal: subtotalOriginal,
+            descuento: descuentoTotal,
+            total: totalFinal,
+            origen: 'Cliente'
           });
           
-          contadorPedidos++;
+          db.idPedidoActual++;
           carrito = [];
           console.log("\n--> ¡Pago exitoso! Pedido " + idPedido + " registrado y stock descontado.");
           salirCarrito = true;
         } else {
           console.log("\n--> Registro cancelado. Su carrito se conserva.");
         }
-        console.log("--------------------------------------------------");
+        
         await rl.question("--> Dale ENTER para continuar...");
         break;
         
@@ -426,52 +387,52 @@ async function crearPedido() {
 
 async function listarPedidos() {
   mostrarBanner();
-  console.log("\n--- FILTRAR MIS PEDIDOS ---");
+  console.log("\nFILTRAR MIS PEDIDOS\n");
   console.log("1. Ver todos mis pedidos");
-  console.log("2. Ver mis pedidos baratos (Hasta $100 pesos)");
-  console.log("3. Ver mis pedidos caros (Mas de $100 pesos)");
+  console.log("2. Ver mis pedidos baratos");
+  console.log("3. Ver mis pedidos caros");
   console.log("4. Ver pedidos que tienen Bebidas");
   console.log("5. Ver pedidos que tienen Comida");
   console.log("6. Regresar al menu principal");
-  console.log("--------------------------------------------------");
+  
   
   const opFiltro = await rl.question("Elige una opcion (1-6): ");
-  let pedidosFiltrados = pedidos;
+  let pedidosFiltrados = db.pedidos;
   
   switch (opFiltro.trim()) {
     case '1':
-      pedidosFiltrados = pedidos;
+      pedidosFiltrados = db.pedidos;
       break;
     case '2':
-      pedidosFiltrados = pedidos.filter(p => p.total <= 100.00);
+      pedidosFiltrados = db.pedidos.filter(p => (p.total || 0) <= 100.00);
       break;
     case '3':
-      pedidosFiltrados = pedidos.filter(p => p.total > 100.00);
+      pedidosFiltrados = db.pedidos.filter(p => (p.total || 0) > 100.00);
       break;
     case '4':
-      pedidosFiltrados = pedidos.filter(p => 
-        p.items.some(item => item.producto.categoria.startsWith('Bebidas'))
+      pedidosFiltrados = db.pedidos.filter(p => 
+        p.items.some(item => item.producto.tipo && item.producto.tipo.toLowerCase() === 'bebida')
       );
       break;
     case '5':
-      pedidosFiltrados = pedidos.filter(p => 
-        p.items.some(item => item.producto.categoria === 'Panaderia')
+      pedidosFiltrados = db.pedidos.filter(p => 
+        p.items.some(item => item.producto.tipo && item.producto.tipo.toLowerCase() === 'comida')
       );
       break;
     case '6':
       return;
     default:
       console.log("--> Opcion no valida. Mostrando todos los pedidos por defecto.");
-      pedidosFiltrados = pedidos;
+      pedidosFiltrados = db.pedidos;
       break;
   }
 
   mostrarBanner();
-  console.log("\n=== MIS PEDIDOS ENCONTRADOS ===");
+  console.log("\nMIS PEDIDOS ENCONTRADOS\n");
 
   if (pedidosFiltrados.length === 0) {
     console.log("\n--> ¡Aviso! No se encontraron pedidos con ese filtro.");
-    console.log("--------------------------------------------------");
+    
     await rl.question("--> Dale ENTER para regresar...");
     return;
   }
@@ -480,44 +441,42 @@ async function listarPedidos() {
     console.log("\n==================================================");
     console.log("Pedido ID: " + p.id + " | Cliente: " + p.cliente);
     console.log("Fecha: " + p.fecha.toLocaleString());
-    console.log("--------------------------------------------------");
+    
     p.items.forEach(item => {
       console.log("  - " + item.producto.nombre.padEnd(22) + " x" + item.cantidad + " | Subtotal: $" + item.subtotal.toFixed(2));
     });
-    console.log("--------------------------------------------------");
-    console.log("Subtotal original:      $" + p.subtotalOriginal.toFixed(2));
-    if (p.descuentoCombo > 0) {
-      console.log("Descuento combo:       -$" + p.descuentoCombo.toFixed(2));
+    
+    console.log("Subtotal:               $" + (p.subtotal || 0).toFixed(2));
+    if (p.descuento > 0) {
+      console.log("Descuento aplicado:    -$" + p.descuento.toFixed(2));
     }
-    if (p.descuentoMonto > 0) {
-      console.log("Descuento 10%:         -$" + p.descuentoMonto.toFixed(2));
+    if (p.iva > 0) {
+      console.log("IVA (16%):              $" + p.iva.toFixed(2));
     }
-    console.log("Total del Pedido:       $" + p.total.toFixed(2));
-    console.log("==================================================");
+    console.log("Total del Pedido:       $" + (p.total || 0).toFixed(2));
+    
   });
 
-  console.log("--------------------------------------------------");
+  
   await rl.question("--> Dale ENTER para regresar al menu...");
 }
 
 async function verPromociones() {
   mostrarBanner();
-  console.log("\n=== DETALLE DE NUESTRAS PROMOCIONES ===");
-  console.log("");
-  console.log("1. COMBO CAFE Y MUFFIN");
-  console.log("   Compra 1 Cafe Americano ($58.00) y 1 Muffin de Chocolate ($45.00)");
-  console.log("   ¡y te llevas el paquete por solo $90.00 pesos!");
-  console.log("   (Ahorras $13.00 pesos en cada combo)");
-  console.log("");
-  console.log("2. DESCUENTO DE LA CASA");
-  console.log("   Si el total de tu pedido es mayor a $150.00 pesos");
-  console.log("   (despues de aplicar combos), ¡te descontamos el 10%!");
-  console.log("");
-  console.log("--------------------------------------------------");
-  await rl.question("--> Dale ENTER para regresar al menu...");
+  console.log("\nDETALLE DE NUESTRAS PROMOCIONES\n");
+  if (!db.promociones || db.promociones.length === 0) {
+    console.log("Actualmente no tenemos promociones activas. ¡Vuelve pronto!");
+  } else {
+    db.promociones.forEach((p, i) => {
+      console.log(`${i + 1}. ${p.nombre}`);
+      console.log(`   ¡Disfruta de un ${p.descuento}% de descuento en tu compra!\n`);
+    });
+  }
+  await rl.question("\n--> Dale ENTER para regresar al menu...");
 }
 
-async function main() {
+export default async function clienteMenu(rlParam) {
+  rl = rlParam;
   let salir = false;
   
   while (!salir) {
@@ -543,18 +502,12 @@ async function main() {
         limpiarConsola();
         console.log("\n¡Gracias por venir! ¡Vuelve pronto por otro cafe!\n");
         salir = true;
-        rl.close();
         break;
       default:
         console.log("\n--> ¡Error! Esa opcion no vale. Elige un numero del 1 al 5.");
-        console.log("--------------------------------------------------");
+        
         await new Promise(resolve => setTimeout(resolve, 2000));
         break;
     }
   }
 }
-
-main().catch(err => {
-  console.error("Error grave en el programa:", err);
-  rl.close();
-});
