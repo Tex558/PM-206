@@ -90,7 +90,7 @@ async function consultarProductos() {
     const cantidad = parseInt(cantInput);
     
     if (isNaN(cantidad) || cantidad <= 0) {
-      console.log("--> ¡Ojo! Tienes que llevar al menos 1 unidad.");
+      console.log("--> Tienes que llevar al menos 1 unidad.");
       await rl.question("\n--> Dale ENTER para regresar...");
       return;
     }
