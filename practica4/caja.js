@@ -31,7 +31,7 @@ function iniciarProcesamientoConCallback(pedido, tiempoMs, callback) {
     .then(resultado => {
       pedido.estado = 'Empacado....';
       setTimeout(() => {
-        pedido.estado = 'Pedido entregado';
+        pedido.estado = 'Listo';
         callback(null, 'Pedido entregado', pedido.id);
       }, 2000);
     })
@@ -189,7 +189,8 @@ async function listarPedidos(rl) {
     const { id, cliente, fecha, items, subtotal, descuento, iva, total, estado } = p;
 
     console.log("\n==================================================");
-    console.log(`Pedido ID: ${id} | Cliente: ${cliente} | Estado actual: ${estado.toUpperCase()}`);
+    const etiqueta = estado === 'Listo' ? '[LISTO]' : estado === 'Cancelado' ? '[CANCELADO]' : `[${estado.toUpperCase()}]`;
+    console.log(`Pedido ID: ${id} | Cliente: ${cliente} | Estado: ${etiqueta}`);
     console.log(`Fecha: ${fecha.toLocaleString()}`);
     console.log("--------------------------------------------------");
 
