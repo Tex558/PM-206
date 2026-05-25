@@ -262,12 +262,12 @@ async function menuPedidos(rl) {
         const tiempoMinutos = parseFloat(tiempoInput) || 1;
         const tiempoMs = tiempoMinutos * 60000;
         
-        const nuevoPedido = { id: db.idPedidoActual++, estado: 'recibido', tiempoMinutos };
+        const idPedido = "PED-" + String(db.idPedidoActual++).padStart(3, '0');
+        const nuevoPedido = { id: idPedido, estado: 'Pedido recibido', tiempoMinutos };
         if (!db.pedidos) db.pedidos = [];
         db.pedidos.push(nuevoPedido);
         console.log(`\nPedido #${nuevoPedido.id} recibido. Tiempo estimado: ${tiempoMinutos} minuto(s).`);
         
-        // Iniciar el procesamiento asincrónicamente sin bloquear la ejecución
         procesarPedido(nuevoPedido, tiempoMs);
         
         await rl.question("\nPedido en marcha. Dale ENTER para continuar...");
@@ -283,26 +283,40 @@ async function menuPedidos(rl) {
   }
 }
 
+export function prepararPedidoPromesa(pedido, tiempoMs) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const rand = Math.random();
+      if (rand < 0.1) {
+        reject({ reason: 'error en cocina' });
+      } else if (rand < 0.3) {
+        reject({ reason: 'falta de ingrediente' });
+      } else {
+        resolve('pedido listo');
+      }
+    }, tiempoMs);
+  });
+}
+
 async function procesarPedido(pedido, tiempoMs) {
-  // Cambia el estado a "en proceso"
-  pedido.estado = 'en proceso';
-  console.log(`\n[ALERTA COCINA] Pedido #${pedido.id} cambió a estado: EN PROCESO.`);
+  pedido.estado = 'Preparando....';
+  console.log(`\n[ALERTA COCINA] Pedido #${pedido.id} cambió a estado: PREPARANDO....`);
   
-  // Esperar el tiempo definido
-  await new Promise(resolve => setTimeout(resolve, tiempoMs));
-  
-  // Simulación de errores o éxito
-  const rand = Math.random();
-  if (rand < 0.1) {
-    pedido.estado = 'cancelado';
-    console.log(`\n[ALERTA COCINA] Pedido #${pedido.id} fue CANCELADO (error en cocina).`);
-  } else if (rand < 0.3) {
-    pedido.estado = 'faltan ingredientes';
-    console.log(`\n[ALERTA COCINA] Pedido #${pedido.id} fue CANCELADO (faltan ingredientes).`);
-  } else {
-    pedido.estado = 'pedido listo';
-    console.log(`\n[ALERTA COCINA] Pedido #${pedido.id} está PEDIDO LISTO.`);
-  }
+  prepararPedidoPromesa(pedido, tiempoMs)
+    .then(resultado => {
+      pedido.estado = 'Empacado....';
+      console.log(`\n[ALERTA COCINA] Pedido #${pedido.id} cambió a estado: EMPACADO....`);
+      setTimeout(() => {
+        pedido.estado = 'Pedido entregado';
+        console.log(`\n[ALERTA COCINA] Pedido #${pedido.id} está PEDIDO ENTREGADO.`);
+      }, 2000);
+    })
+    .catch(error => {
+      pedido.estado = 'Cancelado';
+      console.log(`\n[ALERTA COCINA] Pedido #${pedido.id} fue CANCELADO (${error.reason.toUpperCase()}).`);
+    });
 }
 
 export default cocinaMenu;
+export { procesarPedido };
+
