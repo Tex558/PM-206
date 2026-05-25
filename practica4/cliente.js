@@ -385,7 +385,8 @@ async function crearPedido() {
             iva: iva,
             total: totalFinal,
             origen: 'Cliente',
-            estado: 'Pedido recibido'
+            estado: 'Pedido recibido',
+            tiempoMinutos: 0.13
           };
           
           db.pedidos.push(nuevoPedido);
