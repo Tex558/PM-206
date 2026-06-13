@@ -1,8 +1,6 @@
 //zona1: importaciones
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { Saludo} from './components/Saludo';
-import { Salud2 } from './components/Salud2';
 import { Perfil } from './components/Perfil';
 
 //Zona2: main - hogar de la aplicación, donde se renderizan los componentes y se define la estructura visual de la app
@@ -10,19 +8,20 @@ export default function App() {
   return (
 
       <View style={styles.container}>
-      <Text>------------Componente Nativo------------</Text>
-      <Image source={require('./assets/wave.png')}/>
-      <Text>Hola mundo RN!</Text>
 
-      <Text>------------Componente Simple------------</Text>
-      <Saludo></Saludo>   
+      <Perfil nombre ="Emiliano Jimenez" carrera ="Sistemas" materia ="P movil" cuatri ="9"></Perfil>
 
-      <Text>------------Componente Compuesto------------</Text> 
-      <Salud2></Salud2> 
+      <Text>---------------------------------------------------------------</Text>
 
-      <Text>------------Componente Perfi  l------------</Text>
-      <Perfil></Perfil>
+      <Text>---------------------------------------------------------------</Text>
 
+      <Perfil   
+      nombre ="Alex Rios" 
+      carrera ="Negocios" 
+      materia ="Bisne" 
+      cuatri ="7">
+      </Perfil>
+      
       <StatusBar style="auto" />
     </View>
   );
