@@ -9,14 +9,19 @@ export default function App() {
 
       <View style={styles.container}>
 
-      <Perfil nombre ="Emiliano Jimenez" carrera ="Sistemas" materia ="P movil" cuatri ="9"></Perfil>
-
-      <Text>---------------------------------------------------------------</Text>
-
-      <Text>---------------------------------------------------------------</Text>
+      <Perfil estiloE={styles.tarjetaR} nombre ="Emiliano J" carrera ="Sistemas" materia ="P movil" cuatri ="9"></Perfil>
 
       <Perfil   
+      estiloE={styles.tarjetaV}
       nombre ="Alex Rios" 
+      carrera ="Negocios" 
+      materia ="Bisne" 
+      cuatri ="7">
+      </Perfil>
+
+      <Perfil   
+      estiloE={styles.tarjetaB}
+      nombre ="Saul Silva" 
       carrera ="Negocios" 
       materia ="Bisne" 
       cuatri ="7">
@@ -32,6 +37,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
+    flexDirection: 'row'
   },
+  tarjetaR:{backgroundColor:'#FF6B6B'},
+  tarjetaV:{backgroundColor:'#6BCB77'},
+  tarjetaB:{backgroundColor:'#6ba0cb'}
 });
