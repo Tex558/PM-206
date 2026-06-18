@@ -1,7 +1,7 @@
 //zona1: importaciones
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
-import { Perfil } from './components/Perfil';
+import { StyleSheet, Text, View } from 'react-native';
+import MenuScreen from './screens/MenuScreen';
 
 //Zona2: main - hogar de la aplicación, donde se renderizan los componentes y se define la estructura visual de la app
 export default function App() {
@@ -9,24 +9,8 @@ export default function App() {
 
       <View style={styles.container}>
 
-      <Perfil estiloE={styles.tarjetaR} nombre ="Emiliano J" carrera ="Sistemas" materia ="P movil" cuatri ="9"></Perfil>
+        <MenuScreen/>
 
-      <Perfil   
-      estiloE={styles.tarjetaV}
-      nombre ="Alex Rios" 
-      carrera ="Negocios" 
-      materia ="Bisne" 
-      cuatri ="7">
-      </Perfil>
-
-      <Perfil   
-      estiloE={styles.tarjetaB}
-      nombre ="Saul Silva" 
-      carrera ="Negocios" 
-      materia ="Bisne" 
-      cuatri ="7">
-      </Perfil>
-      
       <StatusBar style="auto" />
     </View>
   );
@@ -40,7 +24,4 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexDirection: 'row'
   },
-  tarjetaR:{backgroundColor:'#FF6B6B'},
-  tarjetaV:{backgroundColor:'#6BCB77'},
-  tarjetaB:{backgroundColor:'#6ba0cb'}
 });
