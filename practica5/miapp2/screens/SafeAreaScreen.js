@@ -1,8 +1,7 @@
-/* Zona 1: Importaciones */
 import React, { useState } from 'react';
 import {SafeAreaView, ScrollView, View, Text, StyleSheet, Switch,} from 'react-native';
 
-/* Zona 2: Componente */
+
 export default function SafeAreaScreen() {
 
   const [activo, setActivo] = useState(true);
@@ -22,7 +21,6 @@ export default function SafeAreaScreen() {
       <View style={styles.fila}>
         <Text style={styles.etiqueta}> Activar SafeAreaView </Text>
         
-        {/* Parte importante */}
         <Switch
           value={activo}
           onValueChange={(valor) => setActivo(valor)}
@@ -61,7 +59,6 @@ export default function SafeAreaScreen() {
   );
 }
 
-/* Zona 3: Estilos */
 const styles = StyleSheet.create({
   fondo: {
     flex: 1,
