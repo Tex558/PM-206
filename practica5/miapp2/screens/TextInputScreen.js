@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { StyleSheet, TextInput, View, Platform, Alert, Keyboard, Button } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, Button, Platform, Alert, StyleSheet, Keyboard } from 'react-native';
 
 export default function TextInputScreen() {
   const [nombre, setNombre] = useState('');
@@ -9,68 +8,45 @@ export default function TextInputScreen() {
   const [correo, setCorreo] = useState('');
 
   const procesarRegistro = () => {
+    if (Platform.OS !== 'web') Keyboard.dismiss();
 
-    if(Platform.OS !== 'web') Keyboard.dismiss();
-    if(!nombre || !password || !edad || !correo){
-
-      alertasManager("Validacion", "Todos los campos son obligatorios");
+    if (!nombre || !password || !edad || !correo) {
+      alertasManager("Validación", "Todos los campos son obligatorios.");
       return;
-
     }
 
-    alertasManager("Exito", 'Registro procesado para: ${nombre} ');
+    alertasManager("Éxito", `Registro procesado para: ${nombre}`);
   };
 
-  const alertasManager = (titulo, mensaje) =>{
-    if (Platform.OS === 'web'){
-      alert('${titulo}: ${mensaje}');
-
-    } else{ 
-
-      Alert.alert(titulo,mensaje); 
+  const alertasManager = (titulo, mensaje) => {
+    if (Platform.OS === 'web') {
+      alert(`${titulo}: ${mensaje}`);
+    } else {
+      Alert.alert(titulo, mensaje);
     }
   };
 
-  return(
+  return (
     <View style={styles.container}>
+      <TextInput style={styles.input} placeholder="Nombre Completo" 
+      value={nombre} onChangeText={setNombre} />
+      
+      <TextInput style={styles.input} placeholder="Contraseña" 
+      value={password} onChangeText={setPassword} secureTextEntry={true} />
+      
+      <TextInput style={styles.input} placeholder="Edad" value={edad} 
+      onChangeText={setEdad} keyboardType="numeric" maxLength={3} />
+      
+      <TextInput style={styles.input} placeholder="Correo Electrónico" 
+      value={correo} onChangeText={setCorreo} keyboardType="email-address" 
+      autoCapitalize="none" autoCorrect={false} />
 
-    {}
-    <TextInput style={style.imput} placeholder="Nombre completo" 
-    value = {nombre} on onChangeText={setNombre}/>
-
-    {}
-    <TextInput style={style.imput} placeholder="Contraseña" 
-    value = {password} on onChangeText={setPassword} secureTextEntry={true}/>
-
-    {}
-    <TextInput style={style.imput} placeholder="Edad" 
-    value = {edad} on onChangeText={setEdad} keyboardType="numeric" maxLength={5}/>
-
-    {}
-    <TextInput style={style.imput} placeholder="Correo" 
-    value = {correo} on onChangeText={setCorreo} keyboardType="email-address" 
-    autoCapitalize="none" autoCorrect={false}/>
-
-    {}
-    <Button
-      title="registrar usuario"
-      onPress={procesarRegistro}
-    />
-
+      <Button title="Registrar Usuario" onPress={procesarRegistro} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, justifyContent:
-    'center', padding: 20, 
-    backgroundColor: '#f5f6fa' },
-  input: { 
-    borderWidth: 1, 
-    borderColor: '#dcdde1',
-    padding: 12, 
-    borderRadius: 8, 
-    marginBottom: 12, 
-    backgroundColor: '#fff' }
+  container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#f5f6fa' },
+  input: { borderWidth: 1, borderColor: '#dcdde1', padding: 12, borderRadius: 8, marginBottom: 12, backgroundColor: '#fff' }
 });
