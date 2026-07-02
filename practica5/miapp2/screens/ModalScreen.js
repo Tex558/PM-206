@@ -1,44 +1,42 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Modal, Pressable} from 'react-native';
-import React, {useState} from 'react';
+import { StyleSheet, Text, View, Button, Modal, Pressable } from 'react-native';
+import React, { useState } from 'react';
 
 export default function ModalScreen() {
-
   const [modalVisible, setModalVisible] = useState(false);
 
-  return(
-    <View style ={styles,container}>
-      <Text stule = {style.titulo}> Ejemplo de Modal y BottomSheet </Text>
+  return (
+    <View style={styles.container}>
+      
+      <Text style={styles.titulo}> Ejemplo de Modal y BottomSheet </Text>
 
       <Button
-      title='Abrir modal'
-      onPress={() => setModalVisible(true)}
+        title='Abrir modal'
+        onPress={() => setModalVisible(true)}
       />
 
       <Modal
-      animationType='slide'
-      transparent = {true}
-      visible = {modalVisible}
+        animationType='slide'
+        transparent={true}
+        visible={modalVisible}
       >
-        <View style = {styles.fondo}>
-          <View style = {styles.bottomSheet}>
-            <Text style = {styles.texto}> Hola, esto es un bottomSheet </Text>
+        <View style={styles.fondo}>
+          <View style={styles.bottomSheet}>
+            <Text style={styles.texto}> Hola, esto es un bottomSheet </Text>
+            
+            <Pressable 
+              style={styles.boton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.textoBoton}> Cerrar </Text>
+            </Pressable>
           </View>
-
-          <Pressable 
-          style = {styles.boton}
-          onPress={() => setModalVisible(false)}
-          >
-            <Text style = {styles.textoBoton}> Cerrar </Text>
-          </Pressable>
-
         </View>
-        
       </Modal>
 
+      <StatusBar style="auto" />
     </View>
-  )
-
+  );
 }
 
 const styles = StyleSheet.create({
