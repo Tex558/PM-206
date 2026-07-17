@@ -1,7 +1,7 @@
 {
   "name": "repa2",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
     "expo": "~54.0.34",
     "expo-router": "~6.0.24",
     "expo-splash-screen": "~31.0.13",
