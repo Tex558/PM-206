@@ -1,25 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, FlatList, StyleSheet, Platform } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { SafeAreaView, View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
 
 export default function ConsultarUsuariosScreen() {
-  const API_URL = 'https://thin-roses-cut.loca.lt';
+  const API_URL = 'http://localhost:5000';
 
   const [usuarios, setUsuarios] = useState([]);
+  const router = useRouter();
 
-  useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const respuesta = await fetch(`${API_URL}/v1/usuarios/`);
-        const datos = await respuesta.json();
-        console.log("Respuesta API:", datos);
-        setUsuarios(datos.usuarios);
-      } catch (error) {
-        console.error('Error API:', error);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUsuarios = async () => {
+        try {
+          const respuesta = await fetch(`${API_URL}/v1/usuarios/`);
+          const datos = await respuesta.json();
+          console.log("Respuesta API:", datos);
+          setUsuarios(datos.usuarios);
+        } catch (error) {
+          console.error('Error API:', error);
+        }
+      };
 
-    fetchUsuarios();
-  }, []);
+      fetchUsuarios();
+    }, [])
+  );
 
   const renderTarjeta = ({ item }) => (
     <View style={styles.card}>
@@ -30,6 +34,13 @@ export default function ConsultarUsuariosScreen() {
       <Text style={styles.info}>
         Edad: {item.edad} años
       </Text>
+
+      <TouchableOpacity 
+        style={styles.detailsLink} 
+        onPress={() => router.push({ pathname: '/detalle', params: { id: item.id, nombre: item.nombre, edad: item.edad } })}
+      >
+        <Text style={styles.detailsLinkText}>Ver detalles -{'>'}</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -91,4 +102,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#4B5563',
   },
+  detailsLink: {
+    marginTop: 15,
+    alignItems: 'flex-end',
+  },
+  detailsLinkText: {
+    color: '#3B82F6',
+    fontWeight: 'bold',
+    fontSize: 14,
+  }
 });

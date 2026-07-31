@@ -1,12 +1,15 @@
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { View, SafeAreaView, Text, TextInput, Pressable, StyleSheet, Alert, Platform } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
-export default function App() {
-  const [nombre, setNombre] = useState('');
-  const [edad, setEdad] = useState('');
+export default function ActualizarUsuarioScreen() {
+  const params = useLocalSearchParams();
+  const [nombre, setNombre] = useState(params.nombre || '');
+  const [edad, setEdad] = useState(params.edad ? params.edad.toString() : '');
   const router = useRouter();
   const [cargando, setCargando] = useState(false);
+
+  const API_URL = 'http://localhost:5000';
 
   const mostrarMensaje = (titulo, mensaje) => {
     if (Platform.OS === 'web') {
@@ -16,30 +19,31 @@ export default function App() {
     }
   };
 
-  const guardarUsuario = async () => {
+  const actualizarUsuario = async () => {
     if (nombre.trim() === '' || edad.trim() === '') {
-      mostrarMensaje('vacios', 'Completa todos los campos.');
+      mostrarMensaje('Campos vacíos', 'Completa todos los campos.');
       return;
     }
 
     try {
       setCargando(true);
-      const respuesta = await fetch('http://localhost:5000/v1/usuarios/', {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
+      const respuesta = await fetch(`${API_URL}/v1/usuarios/${params.id}`, {
+        method: 'PUT',
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": "Basic YWRtaW46MTIzNA=="
+        },
         body: JSON.stringify({ nombre: nombre, edad: Number(edad) })
       });
-      const datos= await respuesta.json();
+      const datos = await respuesta.json();
       console.log("Respuesta API", datos);
-      mostrarMensaje("Exito","Usuario registrado");
-
-      setNombre('');
-      setEdad('');
-
+      
+      mostrarMensaje("Éxito","Usuario actualizado correctamente");
+      router.back();
 
     } catch (error) {
-      console.log("Error API",error);
-      mostrarMensaje("Error","No fue posible guardar")
+      console.log("Error API", error);
+      mostrarMensaje("Error", "No fue posible actualizar")
     } finally {
       setCargando(false);
     }
@@ -49,9 +53,10 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.titulo}>
-          Registro de Usuarios
+          Actualizar Usuario
         </Text>
 
+        <Text style={styles.label}>Nombre</Text>
         <TextInput
           style={styles.input}
           placeholder="Nombre del usuario"
@@ -59,6 +64,7 @@ export default function App() {
           onChangeText={setNombre}
         />
 
+        <Text style={styles.label}>Edad</Text>
         <TextInput
           style={styles.input}
           placeholder="Edad del usuario"
@@ -67,9 +73,9 @@ export default function App() {
           onChangeText={setEdad}
         />
 
-        <Pressable style={styles.boton} onPress={guardarUsuario} disabled = {cargando} >
+        <Pressable style={styles.boton} onPress={actualizarUsuario} disabled={cargando}>
           <Text style={styles.textoBoton}>
-            {cargando? "Guardando...":"Agregar Usuario"} 
+            {cargando ? "Guardando..." : "Guardar cambios"} 
           </Text>
         </Pressable>
       </View>
@@ -81,9 +87,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F7FA',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
     padding: 20,
+    paddingTop: 40,
   },
   card: {
     width: '100%',
@@ -94,10 +100,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
+    shadowOffset: { width: 0, height: 3 },
   },
   titulo: {
     fontSize: 26,
@@ -106,6 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     color: '#1F2937',
   },
+  label: { fontSize: 14, color: '#6B7280', marginBottom: 5, fontWeight: 'bold' },
   input: {
     height: 50,
     borderWidth: 1,
@@ -117,14 +121,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   boton: {
-    backgroundColor: '#29bb0c',
+    backgroundColor: '#FBBF24',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 10,
   },
   textoBoton: {
-    color: '#FFFFFF',
+    color: '#000',
     fontSize: 17,
     fontWeight: 'bold',
   },

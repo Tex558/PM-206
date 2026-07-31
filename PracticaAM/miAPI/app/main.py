@@ -11,16 +11,13 @@ usuarioDB.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="API usuarios ",
-    description="Ivan Isay Guerra",
+    description="Emiliano Jimenez Cantu",
     version="1.0.0"
 )
 
 app.include_router(usuarios.router)
 
-origins = [
-    "http://localhost:8081",
-    "http://127.0.0.1:8081",
-]
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
